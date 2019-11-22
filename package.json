@@ -1,0 +1,22 @@
+{
+  "name": "myexpress",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start":  "npx nodemon main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srenault-efrei/myExpress.git"
+  },
+  "author": "Steven et Alexandre",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/srenault-efrei/myExpress/issues"
+  },
+  "homepage": "https://github.com/srenault-efrei/myExpress#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.0"
+  }
+}
