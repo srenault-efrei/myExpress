@@ -13,3 +13,4 @@ coverage/
 # by others
 .vscode/
 .DS_Store
+.gitignore
