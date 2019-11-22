@@ -7,7 +7,7 @@ class myExpress{
 
 
     get(){
-        console.log('test')
+        console.log('salut')
     }
 
     post(){
