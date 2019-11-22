@@ -34,7 +34,10 @@ class myExpress{
     }
 }
 
-module.exports = function express(){
+function express(){
     return new myExpress()
 }
+
+
+module.exports = express
 
