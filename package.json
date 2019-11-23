@@ -18,5 +18,8 @@
   "homepage": "https://github.com/srenault-efrei/myExpress#readme",
   "devDependencies": {
     "nodemon": "^2.0.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
