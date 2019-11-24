@@ -5,11 +5,6 @@
         "id": 1
     },
     {
-        "name": "ko",
-        "school": "Efrei",
-        "id": 2
-    },
-    {
         "name": "bono",
         "school": "Efrei",
         "id": 3
@@ -32,17 +27,7 @@
     {
         "name": "bono",
         "school": "Efrei",
-        "id": 7
-    },
-    {
-        "name": "bono",
-        "school": "Efrei",
         "id": 8
-    },
-    {
-        "name": "bono",
-        "school": "Efrei",
-        "id": 9
     },
     {
         "name": "bono",

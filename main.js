@@ -36,8 +36,12 @@ else {
   // }) 
 
   // app.delete('/', function (req, res) {
-  //   res.send('DELETE request to homepage')
+  //   res.write('DELETE request to homepage')
   // })
+
+  app.delete('/', function (req, res) {
+    res.write('DELETE request to homepage')
+  })
 
   // app.all('/secret', function (req, res, next) {
   //   console.log('Accessing the secret section ...')

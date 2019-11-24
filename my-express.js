@@ -35,17 +35,17 @@ class myExpress {
 
     get(path, callback) {
         this.app.on('request', (req, res) => {
-            
+
             let pathname = this.getPathname(req)
             if (path == pathname && req.method == 'GET') {
                 callback(req, res)
                 res.end()
 
             } else if (path !== pathname && req.method == 'GET') {
-                res.write('Cannot GET '+pathname)
+                res.write('Cannot GET ' + pathname)
                 res.end()
             }
-           
+
         })
 
     }
@@ -85,7 +85,7 @@ class myExpress {
                 })
 
             } else if (path !== pathname && req.method == 'POST') {
-                res.write('Cannot POST '+pathname)
+                res.write('Cannot POST ' + pathname)
                 res.end()
             }
         })
@@ -101,8 +101,9 @@ class myExpress {
             let matchPut = []
             let json = ""
             let data = ''
+            let isExist = false
 
-            
+
             if (path == pathname && req.method == 'PUT') {
 
                 req.on('data', chunk => {
@@ -113,7 +114,6 @@ class myExpress {
 
                     let putData = JSON.parse(data)
                     const { name, school } = putData
-                    let isExist = false
                     matchPut = putId.match(/(^[0-9]+$)/g) // ON VERIFIE SI ON MATCH AVEC UN NOMBRE
 
 
@@ -150,29 +150,93 @@ class myExpress {
                         }
                     } else {
                         console.log("L'id renseigné n'est pas un nombre ")
-                        
+
                     }
                     callback(req, res)
                     res.end()
                 })
 
             }
-            else if (path !== pathname && req.method == 'PUT'){
-                res.write('Cannot PUT '+pathname)
+            else if (path !== pathname && req.method == 'PUT') {
+                res.write('Cannot PUT ' + pathname)
                 res.end()
             }
         })
 
     }
 
-    delete() {
+    delete(path, callback) {
+
+
+
+        this.app.on('request', (req, res) => {
+
+            let pathname = this.getPathname(req)
+            let splitPathname = pathname.split('/')
+            let matchDelete = []
+            let json = ""
+            let globalJson = []
+            let isExist = false
+
+
+            if (path == pathname && req.method == 'DELETE') {
+                if (path == '/') {
+                    fs.writeFileSync(LOCAL_DATABASE, JSON.stringify([], null, 4))
+                    callback(req, res)
+                    res.end()
+                    console.log("Vous avez supprimé tout les étudiants")
+                } else {
+
+                    let deleteId = splitPathname[splitPathname.length - 1]
+                    matchDelete = deleteId.match(/(^[0-9]+$)/g) // ON VERIFIE SI ON MATCH AVEC UN NOMBRE
+
+                    if (matchDelete != null) { // ON VERIFIE SI IL Y UN NOMBRE
+                        deleteId = parseInt(matchDelete[0])
+                        if (fs.existsSync(LOCAL_DATABASE)) {
+                            json = require(`./${LOCAL_DATABASE}`) //on lit et parse en string
+                            //ON VERIFIE SI L'ID EXISTE
+                            for (const k in json) {
+                                if (json[k].id == deleteId) {
+                                    isExist = true
+                                }
+                            }
+                            // SI IL EXISTE ON VA CHERCHE LA LIGNE A SUPPRIMER
+                            if (isExist == true) {
+                                for (const key in json) {
+                                    if (json[key].id != deleteId) {
+                                        globalJson.push(json[key]) // ON AJOUTE TOUT LES OBJECTS QUI N'ONT PAS L'ID MENTIONNE
+                                        fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(globalJson, null, 4))
+                                    }
+                                }
+                                console.log("l'objet avec l'id " + deleteId + " a été supprimé")
+                            } else {
+                                console.log("l'id " + deleteId + " n'existe pas")
+                            }
+                        } else {
+                            console.log(` le fichier ${LOCAL_DATABASE} ne peut pas etre modifié si il n'existe pas`)
+                        }
+                    } else {
+                        console.log("l'id renseigné n'est pas un nombre ")
+                    }
+                    callback(req, res)
+                    res.end()
+                }
+
+            }
+
+            else if (pathname != path && req.method == 'DELETE') {
+                res.write('Cannot DELETE ' + pathname)
+                res.end()
+            }
+
+        })
 
     }
 
     all() {
 
     }
-    listen(port,callback) {
+    listen(port, callback) {
         if (typeof port == 'number') {
             this.app.listen(port)
             callback()
