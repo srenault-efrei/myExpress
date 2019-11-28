@@ -48,6 +48,10 @@ else {
   //   next() // pass control to the next handler
   // })
 
+  app.render('home', { name: 'Ch0pper' }, (err, html) => {
+  //  console.log(html)
+  })
+
   app.listen(port, () => {
     console.log("app listening on port "+port)
   })

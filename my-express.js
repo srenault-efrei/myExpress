@@ -3,6 +3,8 @@ const http = require('http')
 const fs = require('fs');
 const LOCAL_DATABASE = 'students.json'
 const url = require('url');
+const { Transform } = require('stream')
+
 
 
 
@@ -167,8 +169,6 @@ class myExpress {
 
     delete(path, callback) {
 
-
-
         this.app.on('request', (req, res) => {
 
             let pathname = this.getPathname(req)
@@ -177,7 +177,6 @@ class myExpress {
             let json = ""
             let globalJson = []
             let isExist = false
-
 
             if (path == pathname && req.method == 'DELETE') {
                 if (path == '/') {
@@ -246,7 +245,38 @@ class myExpress {
 
     }
 
-    render() {
+    render(file, obj, fn) {
+        let regex = /({{[\w]+}})/g;
+        let filename = file + '.mustache'
+        let content = ''
+        if (!fs.existsSync(filename)) {
+            console.log(`The file ${filename} does not exist.`);
+        } else {
+            const rstream = fs.createReadStream(file + '.mustache') //lecture du fichier 
+
+            rstream.on('data', chunk => {
+                content = chunk.toString()
+                fn(null, content)
+            })
+
+            const wstream = fs.createWriteStream('homeBis.mustache')
+            const tstream = new Transform({
+                transform(chunk, encoding, callback) {
+
+                    rstream.on("end", () => {
+
+                        let matchKey = content.match(regex)
+                        let keyObject = matchKey[0].replace(/({|})/g, '')
+                        console.log(matchKey[0])
+                        this.push(chunk.toString().replace(matchKey[0], obj[keyObject]))
+                        //this.push(chunk.toString().replace(/Hello/g, 'hii'))
+
+                        callback()
+                    })
+                }
+            })
+            rstream.pipe(tstream).pipe(wstream)
+        }
 
     }
 }
