@@ -51,7 +51,7 @@ else {
 
   // ----------------------------------------------------  RENDER-----------------------------------------------------
 
-  app.render('home', { name: 'Loic' }, (err, html) => {
+  app.render('home', { name: 'Loic',prenom : 'steven' }, (err, html) => {
     if (err != '') {
       console.log(err)
     }
