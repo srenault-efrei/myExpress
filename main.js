@@ -23,7 +23,6 @@ else {
 
   // ----------------------------------------------------  POST-----------------------------------------------------
 
-
   app.post('/students', function (req, res) {
     res.write("POST request")
 
@@ -32,13 +31,13 @@ else {
   // ----------------------------------------------------  PUT-----------------------------------------------------
 
 
-  app.put('/students/1', function (req, res) {
+  app.put('/students/4', function (req, res) {
     res.write('PUT request')
   })
 
   // ----------------------------------------------------  DELETE-----------------------------------------------------
 
-  app.delete('/students/1', function (req, res) {
+  app.delete('/students/5', function (req, res) {
     res.write('DELETE request to homepage')
   })
 

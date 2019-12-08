@@ -8,8 +8,6 @@ class myExpress {
 
     constructor() {
         this.app = this.init()
-        this.response = ''
-        this.request = ''
     }
 
     init() {
@@ -108,7 +106,7 @@ class myExpress {
             let splitPathname = pathname.split('/')
             let putId = splitPathname[splitPathname.length - 1]
             let matchPut = []
-            let json = {}
+            let json = []
             let data = ''
             let isExist = false
 
@@ -190,7 +188,7 @@ class myExpress {
             let pathname = this.getPathname(req)
             let splitPathname = pathname.split('/')
             let matchDelete = []
-            let json = {}
+            let json = []
             let globalJson = []
             let isExist = false
 
@@ -209,7 +207,6 @@ class myExpress {
                         deleteId = parseInt(matchDelete[0])
                         if (fs.existsSync(LOCAL_DATABASE)) {
                             json = require(`./${LOCAL_DATABASE}`)
-                            console.log(json)
                             for (const k in json) {
                                 if (json[k].id == deleteId) {
                                     isExist = true
@@ -220,10 +217,10 @@ class myExpress {
                                 for (const key in json) {
                                     if (json[key].id != deleteId) {
                                         globalJson.push(json[key])
-                                        fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(globalJson, null, 4))
                                     }
+                                    fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(globalJson, null, 4))
+                                    console.log("l'objet avec l'id " + deleteId + " a été supprimé")
                                 }
-                                console.log("l'objet avec l'id " + deleteId + " a été supprimé")
                             } else {
                                 console.log("l'id " + deleteId + " n'existe pas")
                             }
@@ -259,6 +256,9 @@ class myExpress {
     //         let pathname = this.getPathname(req)
     //         if (path == pathname && req.method == 'PROPFIND') {
     //             this.get(path, fn(req,res))
+    //             this.post(path, fn(req,res))
+    //             this.put(path, fn(req,res))
+                // this.delete(path, fn(req,res))
     //         }
     //         else {
     //             console.log("erreur")
