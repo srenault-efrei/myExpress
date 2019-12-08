@@ -4,13 +4,12 @@ const LOCAL_DATABASE = 'students.json'
 const url = require('url');
 
 
-
-
-
 class myExpress {
 
     constructor() {
         this.app = this.init()
+        this.response = ''
+        this.request = ''
     }
 
     init() {
@@ -31,6 +30,7 @@ class myExpress {
     // ---------------------------------------------------- FUNCTION GET-----------------------------------------------------
 
     get(path, callback) {
+
         this.app.on('request', (req, res) => {
 
             let pathname = this.getPathname(req)
@@ -44,14 +44,12 @@ class myExpress {
                 console.log('Cannot GET ' + pathname)
             }
         })
-
     }
     // ---------------------------------------------------- FUNCTION POST-----------------------------------------------------
 
     post(path, callback, ) {
         this.app.on('request', (req, res) => {
 
-            res.writeHead(200, { 'Content-Type': 'text/html' });
             let pathname = this.getPathname(req)
             let body = ''
 
@@ -110,7 +108,7 @@ class myExpress {
             let splitPathname = pathname.split('/')
             let putId = splitPathname[splitPathname.length - 1]
             let matchPut = []
-            let json = ""
+            let json = {}
             let data = ''
             let isExist = false
 
@@ -126,20 +124,20 @@ class myExpress {
                     if (data != '') {
                         let putData = JSON.parse(data)
                         const { name, school } = putData
-                        matchPut = putId.match(/(^[0-9]+$)/g) // ON VERIFIE SI ON MATCH AVEC UN NOMBRE
+                        matchPut = putId.match(/(^[0-9]+$)/g)
 
 
-                        if (matchPut != null) {// ON VERIFIE SI IL Y UN NOMBRE
+                        if (matchPut != null) {
                             putId = parseInt(matchPut[0])
                             if (fs.existsSync(LOCAL_DATABASE)) {
-                                json = require(`./${LOCAL_DATABASE}`) //on lit et parse en string
-                                //ON VERIFIE SI L'ID EXISTE
+                                json = require(`./${LOCAL_DATABASE}`)
+
                                 for (const k in json) {
                                     if (json[k].id == putId) {
                                         isExist = true
                                     }
                                 }
-                                // SI IL EXISTE ON CHERCHE LA LIGNE A MODIFIER
+
                                 if (isExist == true) {
                                     for (const key in json) {
                                         if (json[key].id == putId) {
@@ -164,13 +162,12 @@ class myExpress {
                             console.log("L'id renseigné n'est pas un nombre ")
 
                         }
-                        callback(req, res)
-                        res.end()
                     }
                     else {
                         console.log("Aucune insertion car le body est vide")
                     }
-
+                    callback(req, res)
+                    res.end()
                 })
 
             }
@@ -193,7 +190,7 @@ class myExpress {
             let pathname = this.getPathname(req)
             let splitPathname = pathname.split('/')
             let matchDelete = []
-            let json = ""
+            let json = {}
             let globalJson = []
             let isExist = false
 
@@ -206,23 +203,23 @@ class myExpress {
                 } else {
 
                     let deleteId = splitPathname[splitPathname.length - 1]
-                    matchDelete = deleteId.match(/(^[0-9]+$)/g) // ON VERIFIE SI ON MATCH AVEC UN NOMBRE
+                    matchDelete = deleteId.match(/(^[0-9]+$)/g)
 
-                    if (matchDelete != null) { // ON VERIFIE SI IL Y UN NOMBRE
+                    if (matchDelete != null) {
                         deleteId = parseInt(matchDelete[0])
                         if (fs.existsSync(LOCAL_DATABASE)) {
-                            json = require(`./${LOCAL_DATABASE}`) //on lit et parse en string
-                            //ON VERIFIE SI L'ID EXISTE
+                            json = require(`./${LOCAL_DATABASE}`)
+                            console.log(json)
                             for (const k in json) {
                                 if (json[k].id == deleteId) {
                                     isExist = true
                                 }
                             }
-                            // SI IL EXISTE ON VA CHERCHE LA LIGNE A SUPPRIMER
+
                             if (isExist == true) {
                                 for (const key in json) {
                                     if (json[key].id != deleteId) {
-                                        globalJson.push(json[key]) // ON AJOUTE TOUT LES OBJECTS QUI N'ONT PAS L'ID MENTIONNE
+                                        globalJson.push(json[key])
                                         fs.writeFileSync(LOCAL_DATABASE, JSON.stringify(globalJson, null, 4))
                                     }
                                 }
@@ -255,7 +252,20 @@ class myExpress {
 
     // ---------------------------------------------------- FUNCTION ALL-----------------------------------------------------
 
-    all() { }
+    // all(path, fn) {
+
+    //     this.app.on('request', (req, res) => {
+
+    //         let pathname = this.getPathname(req)
+    //         if (path == pathname && req.method == 'PROPFIND') {
+    //             this.get(path, fn(req,res))
+    //         }
+    //         else {
+    //             console.log("erreur")
+    //         }
+
+    //     })
+    // }
 
     // ---------------------------------------------------- FUNCTION LISTEN-----------------------------------------------------
 
@@ -270,7 +280,7 @@ class myExpress {
     }
 
     // ---------------------------------------------------- FUNCTION RENDER-----------------------------------------------------
-  
+
     render(...args) {
 
         let regex = /({{[\w]+}})/g;
@@ -279,23 +289,23 @@ class myExpress {
         let content = ''
         let fn = ''
         let obj = {}
+        let erreur = ''
 
         if (args.length == 3) {
-            fn = args[args.length - 1]
+
             obj = args[args.length - 2]
-        } else {
-            fn = args[args.length - 1]
         }
 
+        fn = args[args.length - 1]
+
         if (!fs.existsSync(filename)) {
-            console.log(`The file ${filename} does not exist.`);
+            erreur = `The file ${filename} does not exist.`;
         }
         else {
 
-            const rstream = fs.createReadStream(file + '.mustache') //lecture du fichier 
+            const rstream = fs.createReadStream(filename)
             rstream.on('data', chunk => {
                 content = chunk.toString()
-                fn(null, content)
             })
 
             rstream.on("end", () => {
@@ -321,6 +331,7 @@ class myExpress {
             })
 
         }
+        fn(erreur, content)
     }
 }
 
